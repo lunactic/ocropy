@@ -11,6 +11,7 @@ import numpy
 from ocrolib import lineest
 import ocrolib.lstm as lstm
 import traceback
+import sys
 
 numpy.seterr(divide='raise',over='raise',invalid='raise',under='ignore')
 
@@ -68,6 +69,11 @@ parser.add_argument("-p","--pad",type=int,default=16)
 
 parser.add_argument("files",nargs="*")
 args = parser.parse_args()
+
+#set default encoding
+reload(sys)
+sys.setdefaultencoding('UTF8')
+
 
 inputs = ocrolib.glob_all(args.files)
 if len(inputs)==0:
@@ -295,9 +301,9 @@ for trial in range(start,args.ntrain):
     gta = "".join(codec.decode(acs))
     if not args.quiet:
         print "%d %.2f %s"%(trial,network.error,line.shape),fname
-        print "   TRU:",repr(transcript)
-        print "   ALN:",repr(gta[:len(transcript)+5])
-        print "   OUT:",repr(pred[:len(transcript)+5])
+        print "   TRU:",unicode(transcript)
+        print "   ALN:",unicode(gta[:len(transcript)+5])
+        print "   OUT:",unicode(pred[:len(transcript)+5])
 
     pred = re.sub(' ','_',pred)
     gta = re.sub(' ','_',gta)
@@ -317,4 +323,3 @@ for trial in range(start,args.ntrain):
         if args.movie is not None:
             draw()
             savefig("%s-%08d.png"%(args.movie,trial),bbox_inches=0)
-
